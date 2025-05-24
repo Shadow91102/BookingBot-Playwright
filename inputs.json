@@ -1,0 +1,15 @@
+{
+    "email": "jonathan@vooma.ai",
+    "password": "nepcur-8sewsi-zuwxoV",
+    "warehouse_address": "3004 Wayland Ave, Elgin, IL",
+    "name": "FTL Packaged Goods",
+    "operation": "Drop",
+    "equipment_type": "Dry Van",
+    "transportation_mode": "FTL",
+    "date_str": "2025-05-26",
+    "time_str": "11:30 AM",
+    "timezone_str": "America/Chicago",
+    "email_subscribers": "user1@example.com,user2@example.com",
+    "appointment_notes": "Urgent delivery",
+    "pallet_count": 10
+}

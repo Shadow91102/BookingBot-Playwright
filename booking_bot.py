@@ -1,34 +1,9 @@
-from playwright.sync_api import sync_playwright, expect
-from datetime import datetime, timedelta
+from playwright.sync_api import sync_playwright
+from datetime import datetime
 import uuid
 import pytz
-
-# Input variables with example values
-inputs = {
-    # ---------- Login Credentials ----------
-    "email": "jonathan@vooma.ai",                   # User login email
-    "password": "nepcur-8sewsi-zuwxoV",             # User login password
-
-    # ---------- Warehouse Search ----------
-    "warehouse_address": "3004 Wayland Ave, Elgin, IL",  # Address used to search/select the warehouse
-
-    # ---------- Load Type Selection ----------
-    "name": "FTL Packaged Goods",                   # The card title/type of load (e.g., FTL, LTL)
-    "operation": "Drop",                            # Type of operation (e.g., Drop, Live Unload)
-    "equipment_type": "Dry Van",                    # Type of truck/trailer (e.g., Dry Van, Reefer)
-    "transportation_mode": "FTL",                   # Mode of transport: FTL = Full Truckload
-
-    # ---------- Date and Time Selection ----------
-    "date_str": "2025-05-26",                       # Date of appointment in YYYY-MM-DD format
-    "time_str": "11:30 AM",                         # Time of appointment (12-hour format with AM/PM)
-    "timezone_str": "America/Chicago",              # Timezone for the appointment (important for ISO formatting)
-
-    # ---------- Appointment Details ----------
-    "reference_number": f"REF-{uuid.uuid4().hex[:8]}",  # Unique reference ID for this appointment
-    "email_subscribers": "user1@example.com,user2@example.com",  # Emails to be notified about the appointment
-    "appointment_notes": "Urgent delivery",         # Additional notes or instructions
-    "pallet_count": 10                              # Number of pallets to be delivered
-}
+import argparse
+import json
 
 def get_field_by_label(card, label):
     """Find the value for a given label inside the card."""
@@ -68,7 +43,22 @@ def getMatchedWarehouse(cards):
             break
     return matched_index
 
-def schedule_appointment():
+def load_inputs_from_json(json_path):
+    with open(json_path, 'r') as file:
+        data = json.load(file)
+
+    # Add generated reference number
+    data["reference_number"] = f"REF-{uuid.uuid4().hex[:8]}"
+    return data
+
+def main():
+    global inputs
+
+    parser = argparse.ArgumentParser(description="Book an appointment via JSON config")
+    parser.add_argument("--config", type=str, required=True, help="Path to input JSON file")
+    args = parser.parse_args()
+
+    inputs = load_inputs_from_json(args.config)
     with sync_playwright() as p:
         # Launch browser
         browser = p.chromium.launch(headless=False)  # Set headless=True for production
@@ -162,4 +152,4 @@ def schedule_appointment():
 
 
 if __name__ == "__main__":
-    schedule_appointment()
+    main()
